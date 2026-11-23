@@ -3,8 +3,9 @@ public class Main {
 
     int resposta;
 
-    void menu(Scanner scanner, Impressora impressora){
+    void menu(Scanner scanner, Impressora impressora) {
         while (true) {
+
             System.out.println("\n===== MENU PRINCIPAL =====");
             System.out.println("1 - Configurar conexão");
             System.out.println("2 - Abrir conexão");
@@ -19,17 +20,19 @@ public class Main {
             System.out.println("0 - Sair");
 
             System.out.print("Escolha uma opcao: ");
+
             try {
                 resposta = scanner.nextInt();
                 scanner.nextLine();
 
-            } catch (java.util.InputMismatchException e) {
+            } catch (Exception e) {
                 System.out.println("Digite apenas números!");
                 scanner.nextLine();
                 continue;
             }
 
             switch (resposta) {
+
                 case 1:
                     impressora.configurar(scanner);
                     break;
@@ -67,7 +70,9 @@ public class Main {
                     break;
 
                 case 10:
+
                     System.out.print("Quantidade de bipes: ");
+
                     try {
                         int quantidade = scanner.nextInt();
                         scanner.nextLine();
@@ -78,7 +83,7 @@ public class Main {
                             System.out.println("Digite uma quantidade maior que zero!");
                         }
 
-                    } catch (java.util.InputMismatchException e) {
+                    } catch (Exception e) {
                         System.out.println("Digite apenas números!");
                         scanner.nextLine();
                     }
@@ -86,20 +91,18 @@ public class Main {
                     break;
 
                 case 0:
-                    break;
+                    System.out.println("Encerrando programa...");
+                    return;
 
                 default:
                     System.out.println("Opção inválida!");
                     break;
             }
-            if (resposta == 0) {
-                System.out.println("Encerrando programa...");
-                break;
-            }
         }
     }
 
     public static void main(String[] args) {
+
         Scanner scanner = new Scanner(System.in);
 
         Usuario user = new Usuario();
@@ -112,9 +115,11 @@ public class Main {
         if (acesso) {
             Main programa = new Main();
             programa.menu(scanner, impressora);
+
         } else {
             System.out.println("Acesso negado!");
         }
+
         scanner.close();
     }
 }
