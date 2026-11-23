@@ -16,25 +16,25 @@ Este projeto foi desenvolvido por quatro alunos como atividade da disciplina de 
 
 O projeto está organizado da seguinte maneira:
 
-- src/ – Pasta que contém os códigos-fonte do sistema.
-  - Main.java – Inicializa o programa, realiza o acesso ao menu e controla suas opções.
-  - Usuario.java – Responsável pelo cadastro e pela validação do login dos usuários.
-  - Impressora.java – Armazena as configurações da impressora e executa os comandos de impressão.
-  - ImpressoraDLL.java – Interface responsável pela comunicação entre Java e a DLL da Elgin.
+- `src/` – Pasta que contém os códigos-fonte do sistema.
+  - `Main.java` – Inicializa o programa, realiza o acesso ao menu e controla suas opções.
+  - `Usuario.java` – Responsável pelo cadastro e pela validação do login dos usuários.
+  - `Impressora.java` – Armazena as configurações da impressora e executa os comandos de impressão.
+  - `ImpressoraDLL.java` – Interface responsável pela comunicação entre Java e a DLL da Elgin.
 
-- Bibliotecas E1 Impressora/ – Contém as bibliotecas DLL da Elgin, separadas em versões para sistemas de 64 bits (x64) e 32 bits (x86).
+- `Bibliotecas E1 Impressora/` – Contém as bibliotecas DLL da Elgin, separadas em versões para sistemas de 64 bits (x64) e 32 bits (x86).
 
-- libs Java/ – Contém o arquivo `jna-5.15.0.jar`, utilizado para permitir a comunicação entre Java e a DLL.
+- `libs Java/` – Contém o arquivo `jna-5.15.0.jar`, utilizado para permitir a comunicação entre Java e a DLL.
 
-- CANC_SAT.xml – Arquivo XML utilizado nos testes de impressão de cancelamento SAT.
+- `CANC_SAT.xml` – Arquivo XML utilizado nos testes de impressão de cancelamento SAT.
 
-- XMLSAT.xml – Arquivo XML utilizado nos testes de impressão SAT.
+- `XMLSAT.xml` – Arquivo XML utilizado nos testes de impressão SAT.
 
-- .gitignore – Arquivo que define quais pastas e arquivos devem ser ignorados pelo Git.
+- `.gitignore` – Arquivo que define quais pastas e arquivos devem ser ignorados pelo Git.
 
-- README_MODELO.md – Modelo de documentação disponibilizado pelo professor.
+- `README_MODELO.md` – Modelo de documentação disponibilizado pelo professor.
 
-- README.md – Arquivo que apresenta as informações, funcionalidades e instruções de execução do projeto.
+- `README.md` – Arquivo que apresenta as informações, funcionalidades e instruções de execução do projeto.
 
 ## ⚙️ Instalação e Execução
 
