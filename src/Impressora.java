@@ -1,7 +1,4 @@
 import java.util.Scanner;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.InvalidPathException;
 public class Impressora {
 
     String modelo;
@@ -13,21 +10,53 @@ public class Impressora {
     void configurar(Scanner scanner) {
         System.out.println("=== CONFIGURAR CONEXÃO ===");
 
-        System.out.print("Tipo de conexão (1-USB, 2-Serial, 3-Rede, 4-Bluetooth): ");
-        tipo = scanner.nextInt();
-        scanner.nextLine();
+        do {
+            System.out.print("Tipo de conexão (1-USB, 2-Serial, 3-Rede, 4-Bluetooth): ");
+
+            try {
+                tipo = scanner.nextInt();
+                scanner.nextLine();
+
+                if (tipo < 1 || tipo > 4) {
+                    System.out.println("Tipo inválido! Digite entre 1 e 4.");
+                }
+            } catch(Exception e) {
+                tipo = 0;
+                System.out.println("Digite apenas números!");
+                scanner.nextLine();
+            }
+        } while(tipo < 1 || tipo > 4);
+
         System.out.print("Modelo da impressora: ");
         modelo = scanner.nextLine();
         System.out.print("Conexão (USB, COM2 ou IP): ");
         conexao = scanner.nextLine();
-        System.out.print("Parâmetro: ");
-        parametro = scanner.nextInt();
-        scanner.nextLine();
+
+        boolean parametroValido = false;
+
+        while (parametroValido == false) {
+            System.out.print("Parâmetro: ");
+
+            try {
+                parametro = scanner.nextInt();
+                scanner.nextLine();
+                parametroValido = true;
+            } catch(Exception e) {
+                System.out.println("Digite apenas números!");
+                scanner.nextLine();
+            }
+        }
+
         System.out.println("Configuração realizada!");
     }
 
     void abrirConexao() {
         System.out.println("=== ABRIR CONEXÃO ===");
+
+        if (modelo == null || modelo.isEmpty() || conexao == null || conexao.isEmpty()) {
+            System.out.println("Configure a impressora antes de abrir a conexão!");
+            return;
+        }
 
         try {
             int retorno = ImpressoraDLL.INSTANCE.AbreConexaoImpressora(tipo, modelo, conexao, parametro);
@@ -39,6 +68,9 @@ public class Impressora {
             }
         } catch (UnsatisfiedLinkError e) {
             System.out.println("Não foi possível carregar a DLL: " + e.getMessage());
+        } catch (Exception e) {
+            conexaoAberta = false;
+            System.out.println("Erro ao abrir conexão: " + e.getMessage());
         }
     }
 
@@ -61,7 +93,8 @@ public class Impressora {
             }
         } catch (UnsatisfiedLinkError e) {
             System.out.println("Erro ao carregar a biblioteca da impressora.");
-            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro ao fechar conexão: " + e.getMessage());
         }
     }
 
@@ -88,13 +121,15 @@ public class Impressora {
             }
         } catch (UnsatisfiedLinkError e) {
             System.out.println("Erro ao carregar a biblioteca da impressora.");
+        } catch (Exception e) {
+            System.out.println("Erro ao imprimir texto: " + e.getMessage());
         }
     }
 
     void imprimirQRCode(Scanner scanner) {
         String dados;
-        int tamanho;
-        int nivelCorrecao;
+        int tamanho = 0;
+        int nivelCorrecao = 0;
 
         if (conexaoAberta == false) {
             System.out.println("Conexão fechada. Abra a conexão antes.");
@@ -108,21 +143,36 @@ public class Impressora {
 
         do {
             System.out.print("Tamanho do QR Code (1 a 6): ");
-            tamanho = scanner.nextInt();
-            scanner.nextLine();
 
-            if (tamanho < 1 || tamanho > 6) {
-                System.out.println("Tamanho inválido! Digite entre 1 e 6.");
+            try {
+                tamanho = scanner.nextInt();
+                scanner.nextLine();
+
+                if (tamanho < 1 || tamanho > 6) {
+                    System.out.println("Tamanho inválido! Digite entre 1 e 6.");
+                }
+            } catch(Exception e) {
+                tamanho = 0;
+                System.out.println("Digite apenas números!");
+                scanner.nextLine();
             }
+
         } while (tamanho < 1 || tamanho > 6);
 
         do {
             System.out.print("Nível de correção (1 a 4): ");
-            nivelCorrecao = scanner.nextInt();
-            scanner.nextLine();
 
-            if (nivelCorrecao < 1 || nivelCorrecao > 4) {
-                System.out.println("Nível inválido! Digite entre 1 e 4.");
+            try {
+                nivelCorrecao = scanner.nextInt();
+                scanner.nextLine();
+
+                if (nivelCorrecao < 1 || nivelCorrecao > 4) {
+                    System.out.println("Nível inválido! Digite entre 1 e 4.");
+                }
+            } catch(Exception e) {
+                nivelCorrecao = 0;
+                System.out.println("Digite apenas números!");
+                scanner.nextLine();
             }
         } while (nivelCorrecao < 1 || nivelCorrecao > 4);
 
@@ -136,15 +186,17 @@ public class Impressora {
             }
         } catch (UnsatisfiedLinkError e) {
             System.out.println("Erro ao carregar a biblioteca da impressora.");
+        } catch (Exception e) {
+            System.out.println("Erro ao imprimir QR Code: " + e.getMessage());
         }
     }
 
     void imprimirCodigoBarras(Scanner scanner) {
-        String dados;
-        int tipoCodigo;
-        int altura;
-        int largura;
-        int HRI;
+        String dados = "{A12345678912}";
+        int tipoCodigo = 0;
+        int altura = 0;
+        int largura = 0;
+        int HRI = -1;
 
         if (conexaoAberta == false) {
             System.out.println("Conexão fechada. Abra a conexão antes.");
@@ -152,32 +204,89 @@ public class Impressora {
         }
 
         System.out.println("=== IMPRIMIR CÓDIGO DE BARRAS ===");
+        System.out.print("Dados do código de barras: " + dados);
 
-        System.out.print("Digite os dados do código de barras: ");
-        dados = scanner.nextLine();
-        System.out.print("Digite o tipo do código de barras:");
-        tipoCodigo = scanner.nextInt();
-        scanner.nextLine();
-        System.out.print("Digite a altura: ");
-        altura = scanner.nextInt();
-        scanner.nextLine();
-        System.out.print("Digite a largura: ");
-        largura = scanner.nextInt();
-        scanner.nextLine();
-        System.out.print("Exibir os numeros abaixo do codigo? (1-Sim / 0-Nao): ");
-        HRI = scanner.nextInt();
-        scanner.nextLine();
+        while (tipoCodigo <= 0) {
+            System.out.print("Digite o tipo do código de barras:");
+
+            try {
+                tipoCodigo = scanner.nextInt();
+                scanner.nextLine();
+
+                if (tipoCodigo <= 0) {
+                    System.out.println("Digite um tipo válido!");
+                }
+            } catch(Exception e) {
+                tipoCodigo = 0;
+                System.out.println("Digite apenas números!");
+                scanner.nextLine();
+            }
+        }
+
+        while (altura <= 0) {
+            System.out.print("Digite a altura: ");
+
+            try {
+                altura = scanner.nextInt();
+                scanner.nextLine();
+
+                if (altura <= 0) {
+                    System.out.println("A altura deve ser maior que zero!");
+                }
+            } catch(Exception e) {
+                altura = 0;
+                System.out.println("Digite apenas números!");
+                scanner.nextLine();
+            }
+        }
+
+        while (largura <= 0) {
+            System.out.print("Digite a largura: ");
+
+            try {
+                largura = scanner.nextInt();
+                scanner.nextLine();
+
+                if (largura <= 0) {
+                    System.out.println("A largura deve ser maior que zero!");
+                }
+            } catch(Exception e) {
+                largura = 0;
+                System.out.println("Digite apenas números!");
+                scanner.nextLine();
+            }
+        }
+
+        do {
+            System.out.print("Exibir os numeros abaixo do codigo? (1-Sim / 0-Nao): ");
+
+            try {
+                HRI = scanner.nextInt();
+                scanner.nextLine();
+
+                if (HRI != 0 && HRI != 1) {
+                    System.out.println("Digite 1 ou 0!");
+                }
+            } catch (Exception e) {
+                HRI = -1;
+                System.out.println("Digite apenas números!");
+                scanner.nextLine();
+            }
+        } while (HRI != 0 && HRI != 1);
 
         try {
             int resultado = ImpressoraDLL.INSTANCE.ImpressaoCodigoBarras(tipoCodigo, dados, altura, largura, HRI);
 
             if (resultado == 0) {
                 System.out.println("Codigo de barras enviado para impressao!");
+                ImpressoraDLL.INSTANCE.ImpressaoTexto("\n\n", 0, 0, 0);
             } else {
                 System.out.println("Erro ao imprimir codigo de barras. Codigo: " + resultado);
             }
         } catch (UnsatisfiedLinkError e) {
             System.out.println("Erro ao carregar a biblioteca da impressora.");
+        } catch (Exception e) {
+            System.out.println("Erro ao imprimir código de barras: " + e.getMessage());
         }
     }
 
@@ -191,31 +300,19 @@ public class Impressora {
 
         System.out.println("=== IMPRIMIR XML SAT ===");
 
-        System.out.print("Digite o caminho do arquivo XML: ");
-        caminho = scanner.nextLine();
-
         try {
-
-            if (Files.isRegularFile(Paths.get(caminho)) == false) {
-                System.out.println("Arquivo XML não encontrado!");
-                return;
-            }
-
-            int parametroXML = 0;
-
-            int resultado = ImpressoraDLL.INSTANCE.ImprimeXMLSAT("path=" + caminho, parametroXML);
+            int resultado = ImpressoraDLL.INSTANCE.ImprimeXMLSAT("path=XMLSAT.xml", 0);
 
             if (resultado == 0) {
                 System.out.println("XML SAT enviado para impressão!");
+                ImpressoraDLL.INSTANCE.ImpressaoTexto("\n\n", 0, 0, 0);
             } else {
                 System.out.println("Erro ao imprimir XML SAT. Código: " + resultado);
             }
-
-        } catch (InvalidPathException e) {
-            System.out.println("Caminho do arquivo inválido!");
-
         } catch (UnsatisfiedLinkError e) {
             System.out.println("Erro ao carregar a biblioteca da impressora.");
+        } catch (Exception e) {
+            System.out.println("Erro ao imprimir XML SAT: " + e.getMessage());
         }
     }
 
@@ -226,53 +323,27 @@ public class Impressora {
             return;
         }
 
-        String caminho;
         String assQRCode;
 
         System.out.println("=== IMPRIMIR XML DE CANCELAMENTO SAT ===");
-
-        System.out.print("Digite o caminho do XML de cancelamento: ");
-        caminho = scanner.nextLine();
 
         System.out.print("Digite a assinatura do QR Code da venda: ");
         assQRCode = scanner.nextLine();
 
         try {
-
-            if (Files.isRegularFile(Paths.get(caminho)) == false ||
-                    caminho.toLowerCase().endsWith(".xml") == false) {
-
-                System.out.println("Arquivo XML inválido ou não encontrado!");
-                return;
-            }
-
-            int parametroXML = 0;
-
-            String caminhoCompleto = Paths.get(caminho)
-                    .toAbsolutePath()
-                    .toString()
-                    .replace("\\", "/");
-
-            int resultado = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT(
-                    "path=" + caminhoCompleto,
-                    assQRCode,
-                    parametroXML
-            );
+            int resultado = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT("path=CANC_SAT.xml", assQRCode, 0);
 
             if (resultado == 0) {
                 System.out.println("XML de cancelamento enviado para impressão!");
+                ImpressoraDLL.INSTANCE.ImpressaoTexto("\n\n", 0, 0, 0);
             } else {
                 System.out.println("Erro ao imprimir XML de cancelamento. Código: " + resultado);
             }
 
-        } catch (InvalidPathException e) {
-            System.out.println("Caminho do arquivo inválido!");
-
-        } catch (SecurityException e) {
-            System.out.println("Sem permissão para acessar o arquivo.");
-
         } catch (UnsatisfiedLinkError e) {
             System.out.println("Erro ao carregar a biblioteca da impressora.");
+        } catch (Exception e) {
+            System.out.println("Erro ao imprimir XML de cancelamento: " + e.getMessage());
         }
     }
 
@@ -297,18 +368,35 @@ public class Impressora {
 
         } catch (UnsatisfiedLinkError e) {
             System.out.println("Erro ao carregar a biblioteca da impressora.");
+        } catch (Exception e) {
+            System.out.println("Erro ao abrir gaveta: " + e.getMessage());
         }
     }
 
     void sinalSonoro(int quantidade) {
+        if (conexaoAberta == false) {
+            System.out.println("Conexão fechada. Abra a conexão antes.");
+            return;
+        }
+
+        if (quantidade <= 0) {
+            System.out.println("Digite uma quantidade maior que zero!");
+            return;
+        }
+
         System.out.println("=== SINAL SONORO ===");
-        int retorno = ImpressoraDLL.INSTANCE.SinalSonoro(quantidade, 50, 5);
-        if (retorno == 0) {
-            System.out.println("Bip!");
-        } else {
-            System.out.println("Erro no sinal sonoro. Código: " + retorno);
+
+        try {
+            int retorno = ImpressoraDLL.INSTANCE.SinalSonoro(quantidade, 50, 5);
+            if (retorno == 0) {
+                System.out.println("Bip!");
+            } else {
+                System.out.println("Erro no sinal sonoro. Código: " + retorno);
+            }
+        } catch(UnsatisfiedLinkError e) {
+            System.out.println("Erro ao carregar a biblioteca da impressora.");
+        } catch (Exception e) {
+            System.out.println("Erro no sinal sonoro: " + e.getMessage());
         }
     }
-
-
 }
