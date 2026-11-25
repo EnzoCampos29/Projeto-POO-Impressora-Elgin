@@ -6,6 +6,7 @@ public class Impressora {
     int tipo;
     int parametro;
     boolean conexaoAberta = false;
+    private static final String ASSINATURA_QR_CODE = "Q5DLkpdRijIRGY6YSSNsTWK1TztHL1vD0V1Jc4spo/CEUqICEb9SFy82ym8EhBRZjbh3btsZhF+sjHqEMR159i4agru9x6KsepK/q0E2e5xlU5cv3m1woYfgHyOkWDNcSdMsS6bBh2Bpq6s89yJ9Q6qh/J8YHi306ce9Tqb/drKvN2XdE5noRSS32TAWuaQEVd7u+TrvXlOQsE3fHR1D5f1saUwQLPSdIv01NF6Ny7jZwjCwv1uNDgGZONJdlTJ6p0ccqnZvuE70aHOI09elpjEO6Cd+orI7XHHrFCwhFhAcbalc+ZfO5b/+vkyAHS6CYVFCDtYR9Hi5qgdk31v23w==";
 
     void configurar(Scanner scanner) {
         System.out.println("=== CONFIGURAR CONEXÃO ===");
@@ -116,6 +117,7 @@ public class Impressora {
 
             if (resultado >= 0) {
                 System.out.println("Texto enviado para impressão!");
+                ImpressoraDLL.INSTANCE.Corte(5);
             } else {
                 System.out.println("Erro ao imprimir texto. Código: " + resultado);
             }
@@ -181,6 +183,7 @@ public class Impressora {
 
             if (resultado == 0) {
                 System.out.println("QR Code enviado para a impressora!");
+                ImpressoraDLL.INSTANCE.Corte(5);
             } else {
                 System.out.println("Erro ao imprimir QR Code. Código: " + resultado);
             }
@@ -280,6 +283,7 @@ public class Impressora {
             if (resultado == 0) {
                 System.out.println("Codigo de barras enviado para impressao!");
                 ImpressoraDLL.INSTANCE.ImpressaoTexto("\n\n", 0, 0, 0);
+                ImpressoraDLL.INSTANCE.Corte(5);
             } else {
                 System.out.println("Erro ao imprimir codigo de barras. Codigo: " + resultado);
             }
@@ -306,6 +310,7 @@ public class Impressora {
             if (resultado == 0) {
                 System.out.println("XML SAT enviado para impressão!");
                 ImpressoraDLL.INSTANCE.ImpressaoTexto("\n\n", 0, 0, 0);
+                ImpressoraDLL.INSTANCE.Corte(5);
             } else {
                 System.out.println("Erro ao imprimir XML SAT. Código: " + resultado);
             }
@@ -327,8 +332,7 @@ public class Impressora {
 
         System.out.println("=== IMPRIMIR XML DE CANCELAMENTO SAT ===");
 
-        System.out.print("Digite a assinatura do QR Code da venda: ");
-        assQRCode = scanner.nextLine();
+        int resultado = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT( "path=CANC_SAT.xml", ASSINATURA_QR_CODE, 0 );
 
         try {
             int resultado = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT("path=CANC_SAT.xml", assQRCode, 0);
@@ -336,6 +340,7 @@ public class Impressora {
             if (resultado == 0) {
                 System.out.println("XML de cancelamento enviado para impressão!");
                 ImpressoraDLL.INSTANCE.ImpressaoTexto("\n\n", 0, 0, 0);
+                ImpressoraDLL.INSTANCE.Corte(5);
             } else {
                 System.out.println("Erro ao imprimir XML de cancelamento. Código: " + resultado);
             }
@@ -358,7 +363,7 @@ public class Impressora {
 
         try {
 
-            int resultado = ImpressoraDLL.INSTANCE.AbreGaveta(0, 5, 5);
+            int resultado = ImpressoraDLL.INSTANCE.AbreGavetaElgin(0, 5, 5);
 
             if (resultado == 0) {
                 System.out.println("Comando para abrir a gaveta enviado com sucesso!");
