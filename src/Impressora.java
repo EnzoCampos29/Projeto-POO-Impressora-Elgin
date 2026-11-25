@@ -328,14 +328,10 @@ public class Impressora {
             return;
         }
 
-        String assQRCode;
-
         System.out.println("=== IMPRIMIR XML DE CANCELAMENTO SAT ===");
 
-        int resultado = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT( "path=CANC_SAT.xml", ASSINATURA_QR_CODE, 0 );
-
         try {
-            int resultado = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT("path=CANC_SAT.xml", assQRCode, 0);
+            int resultado = ImpressoraDLL.INSTANCE.ImprimeXMLCancelamentoSAT("path=CANC_SAT.xml", ASSINATURA_QR_CODE, 0);
 
             if (resultado == 0) {
                 System.out.println("XML de cancelamento enviado para impressão!");
